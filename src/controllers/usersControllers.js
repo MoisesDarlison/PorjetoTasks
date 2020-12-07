@@ -35,7 +35,7 @@ module.exports = {
             const { id } = await req.params
             const userFilter = await user.findOne(
                 {
-                    where: { id: `${id}` },
+                    where: { id: id },
                     attributes: ['id', 'name'],
                 });
 
@@ -50,7 +50,7 @@ module.exports = {
             const { id } = await req.params
             const userDelet = await user.destroy(
                 {
-                    where: { id: id }, 
+                    where: { id: id },
                 });
             return res.status(200).json({ id: `${id} DELETED SUCESS` })
         } catch (error) {
@@ -80,7 +80,7 @@ module.exports = {
                 {
                     where: { id: id },
                 });
-        
+
             return res.status(201).json({})
         } catch (error) {
             console.log(error)

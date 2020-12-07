@@ -1,4 +1,4 @@
-const connection = require("../database/index")
+const connection = require("../../config/connections")
 const Sequelize = require('sequelize')
 const bcrypt = require('bcrypt');
 

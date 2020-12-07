@@ -30,15 +30,5 @@ module.exports = {
             return res.status(500).json({})
         }
     },
-    async verifyJWT(req, res, next) {
 
-        const authorization = req.headers.authorization
-        jwt.verify(authorization, SECRET, (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ err: err.message })
-            }
-            req.userIdJWT = decoded.userId
-            next()
-        })
-    }
 }

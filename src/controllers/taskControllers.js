@@ -15,7 +15,7 @@ module.exports = {
                 where: { id: userId },
                 include: {
                     model: task,
-                    attributes: ['title', 'description', 'status'],
+                    attributes: ['id', 'title', 'description', 'status'],
                     limit: pageTamanho,//paginacao
                     offset: (page - 1) * pageTamanho,
                 },
@@ -51,14 +51,6 @@ module.exports = {
         try {
             const { id } = await req.params
             const userId = req.userIdJWT
-            const userExist = await user.findByPk(userId)
-            const taskExist = await task.findByPk(id)
-
-
-            if (!userExist || !taskExist) {
-                return res.status(400).json({ error: 'USUARIO/TASK NAO EXISTE' })
-            }
-
             const taskFilter = await task.findOne(
                 {
                     where: { id: id, userId: userId },
@@ -78,13 +70,6 @@ module.exports = {
         try {
             const { id } = await req.params
             const userId = req.userIdJWT
-            const userExist = await user.findByPk(userId)
-            const taskExist = await task.findByPk(id)
-
-
-            if (!userExist || !taskExist) {
-                return res.status(400).json({ error: 'USUARIO/TASK NAO EXISTE' })
-            }
 
             const taskFilter = await task.destroy(
                 {
@@ -97,28 +82,25 @@ module.exports = {
 
             return res.status(201).json('TASK DELETE SUCESS')
         } catch (error) {
-            console.log(error)
             return res.status(404).json({})
         }
     },
-    async upgrade(req, res) {
+    async update(req, res) {
         try {
             const { id } = await req.params
             const userId = req.userIdJWT
 
-            const userExist = await user.findByPk(userId)
-            const taskExist = await task.findByPk(id)
-            if (!userExist || !taskExist) {
-                return res.status(400).json({ error: 'USUARIO/TASK NAO EXISTE' })
-            }
-
-            const taskManter = await task.findOne(
+            const taskExist = await task.findOne(
                 {
                     where: { id: id, userId: userId },
-                    attributes: ['description', 'status']
+                    attributes: ['id']
                 });
 
-            const { description = taskManter.description, status = taskManter.status } = req.body
+            if (!taskExist) {
+                return res.status(401).json({ error: 'USUARIO/TASK NAO EXISTE' })
+            }
+
+            const { description, status } = req.body
             await task.update(
                 {
                     description,
@@ -130,7 +112,6 @@ module.exports = {
 
             return res.status(201).json('ATUALIZACAO REALIZADA COM SUCESSO')
         } catch (error) {
-            console.log(error)
             return res.status(500).json({})
         }
     },
