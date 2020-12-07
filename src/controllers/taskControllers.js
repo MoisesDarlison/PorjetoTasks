@@ -2,26 +2,23 @@ const task = require('../models/tasks')
 const user = require('../models/users')
 
 module.exports = {
-
     async index(req, res) {
         const { page = 1 } = req.query;
-        const pageTamanho = 2
+        const pageSize = 2
         const userId = req.userIdJWT
         try {
-            //RETORNA TOTAL DE TASKS DE CADA USER E ENVIA AO HEADER
             const totaltasks = await task.count({ where: { 'userId': userId } })
-            const taskpaginado = await user.findAll({
+            const taskPaged = await user.findAll({
                 attributes: ['id', 'name'],
                 where: { id: userId },
                 include: {
                     model: task,
                     attributes: ['id', 'title', 'description', 'status'],
-                    limit: pageTamanho,//paginacao
-                    offset: (page - 1) * pageTamanho,
+                    limit: pageSize,
+                    offset: (page - 1) * pageSize,
                 },
-
             })
-            return res.status(200).json({ taskpaginado, totaltasks })
+            return res.status(200).json({ taskPaged, totaltasks })
         } catch (error) {
             console.log(error)
             return res.status(500).json({})
@@ -30,16 +27,20 @@ module.exports = {
 
     async create(req, res) {
         try {
-            //const { userId } = await req.params
             const userId = req.userIdJWT
             const { title, description, status } = req.body
             const userExist = await user.findByPk(userId)
-
             if (!userExist) {
-                return res.status(400).json({ error: `USUARIO ${userExist} NAO EXISTE` })
+                return res.status(400).json({ error: `User ${userExist} does not exist` })
             }
 
-            const taskNew = await task.create({ userId, title, description, status })
+            const taskNew = await task.create(
+                {
+                    userId,
+                    title,
+                    description,
+                    status
+                })
 
             return res.status(201).json(taskNew)
         } catch (error) {
@@ -47,6 +48,7 @@ module.exports = {
             return res.status(500).json({})
         }
     },
+
     async filter(req, res) {
         try {
             const { id } = await req.params
@@ -58,7 +60,7 @@ module.exports = {
                 });
 
             if (!taskFilter) {
-                return res.status(401).json({ error: 'ACESSO NEGADO' })
+                return res.status(401).json({ error: 'ACCESS DENIED' })
             }
             return res.status(200).json(taskFilter)
         } catch (error) {
@@ -66,6 +68,7 @@ module.exports = {
             return res.status(404).json({})
         }
     },
+    
     async destroy(req, res) {
         try {
             const { id } = await req.params
@@ -77,7 +80,7 @@ module.exports = {
                 });
 
             if (!taskFilter) {
-                return res.status(401).json({ error: 'ACESSO NEGADO' })
+                return res.status(401).json({ error: 'ACCESS DENIED' })
             }
 
             return res.status(201).json('TASK DELETE SUCESS')
@@ -85,6 +88,7 @@ module.exports = {
             return res.status(404).json({})
         }
     },
+
     async update(req, res) {
         try {
             const { id } = await req.params
@@ -97,7 +101,7 @@ module.exports = {
                 });
 
             if (!taskExist) {
-                return res.status(401).json({ error: 'USUARIO/TASK NAO EXISTE' })
+                return res.status(401).json({ error: 'User/Task does not exist' })
             }
 
             const { description, status } = req.body
@@ -110,10 +114,9 @@ module.exports = {
                     where: { id: id, userId: userId },
                 });
 
-            return res.status(201).json('ATUALIZACAO REALIZADA COM SUCESSO')
+            return res.status(201).json('Update Sucess')
         } catch (error) {
             return res.status(500).json({})
         }
     },
-
 }

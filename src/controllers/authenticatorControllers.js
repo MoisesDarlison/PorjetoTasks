@@ -7,28 +7,23 @@ module.exports = {
     async create(req, res) {
         const { name, password } = req.body
         try {
-            const userdados = await user.findOne(
+            const userdata = await user.findOne(
                 {
                     where: { name: name },
                     attributes: ['id', 'password'],
                 });
-            if (!userdados) {
-                return res.status(401).json({ erro: 'NAO AUTORIZADO USERDADOS' });
+
+            const validateUser = bcrypt.compareSync(password, userdata.dataValues.password)
+            if (!validateUser) {
+                return res.status(401).json({ erro: 'ACCESS DENIED' });
             }
 
-            const validaUser = bcrypt.compareSync(password, userdados.dataValues.password)
-
-            if (!validaUser) {
-                return res.status(401).json({ erro: 'NAO AUTORIZADO VALIDA USER' });
-            }
-
-            const token = jwt.sign({ userId: userdados.dataValues.id }, SECRET, { expiresIn: 3000000 })
-            return res.status(200).json({ id: userdados, token })
+            const token = jwt.sign({ userId: userdata.dataValues.id }, SECRET, { expiresIn: 3000000 })
+            return res.status(200).json({ id: userdata, token })
 
         } catch (error) {
             console.log(error)
             return res.status(500).json({})
         }
     },
-
 }

@@ -2,11 +2,9 @@ const express = require('express')
 const routes = express()
 const userController = require('../controllers/usersControllers')
 const taskController = require('../controllers/taskControllers')
-const authenticator = require('../middleware/authenticator')
 const authenticatorControllers = require('../controllers/authenticatorControllers')
+const authenticator = require('../middleware/authenticator')
 
-
-//rota de login Authorization ,loginMiddleware.verifyJWT
 routes.post('/login',authenticatorControllers.create)
 
 routes.get('/users',userController.index)

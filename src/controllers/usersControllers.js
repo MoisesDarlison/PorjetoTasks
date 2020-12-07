@@ -1,18 +1,17 @@
-const crypto = require('crypto')
 const user = require('../models/users.js')
 
 module.exports = {
     async index(req, res) {
         const { page = 1 } = req.query;
-        const pageTamanho = 10
+        const pageSize = 5
 
         try {
-            const userTodos = await user.findAll({
-                limit: pageTamanho,
-                offset: (page - 1) * pageTamanho,
+            const userAll = await user.findAll({
+                limit: pageSize,
+                offset: (page - 1) * pageSize,
                 attributes: ['id', 'name'],
             })
-            return res.status(200).json(userTodos)
+            return res.status(200).json(userAll)
         } catch (error) {
             console.log(error)
             return res.status(500).json({})
@@ -61,14 +60,14 @@ module.exports = {
     async update(req, res) {
         try {
             const { id } = await req.params
-            const userLocalizado = await user.findOne(
+            const LocalizedUser = await user.findOne(
                 {
                     where: { id: id },
                     attributes: ['name', 'password'],
                 });
 
-            if (!userLocalizado) {
-                return res.status(400).json('USER NAO LOCALIZADO')
+            if (!LocalizedUser) {
+                return res.status(400).json('User does not exist')
             }
 
             const { name, password } = req.body
