@@ -21,12 +21,20 @@ module.exports = {
     async create(req, res) {
         try {
             const { name, password } = req.body
+            const userExist = await user.findOne(
+                {
+                    where: { name: name },
+                    attributes: ['name']
+                });
+            if (userExist) {
+                return res.status(201).json(`SELECT A DIFFERENT USER FROM ${name}`)
+            }
             const userNew = await user.create({ name, password })
-
             return res.status(201).json(userNew)
+
         } catch (error) {
-            console.log(error)
-            return res.status(500).json({})
+            console.log(error);
+            return res.status(500).json('INVALID USER')
         }
     },
     async filter(req, res) {

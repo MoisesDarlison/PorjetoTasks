@@ -1,0 +1,11 @@
+#Config do Server
+PORT_APP = INTEGER
+
+#Cript password_user
+PASSWORD_USER_SECRET_KEY = STRING
+
+#Config DB postgres
+USER_DB = STRING
+PASSWORD_DB = STRING
+NAME_DB = STRING
+PORT_DB = INTEGER
