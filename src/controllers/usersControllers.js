@@ -27,7 +27,7 @@ module.exports = {
                     attributes: ['name']
                 });
             if (userExist) {
-                return res.status(201).json(`SELECT A DIFFERENT USER FROM ${name}`)
+                return res.status(401).json(`SELECT A DIFFERENT USER FROM ${name}`)
             }
             const userNew = await user.create({ name, password })
             return res.status(201).json(userNew)
