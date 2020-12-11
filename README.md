@@ -75,7 +75,7 @@ http://address:port
 `POST: /login` - necessário enviar name e password por meio de JSON pelo Body 
 #### Esta operacao retornara um token(Authorization) que sera utilizado parar acessar as tasks deste usuario
 
-# TAKS
+# TASKS
 ### _Qualquer operação com as tasks será necessário enviar a Authorization por meio de headers_
 
 ## Nova task
